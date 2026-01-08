@@ -1,4 +1,4 @@
-package input
+package menu
 
 import (
 	"bufio"
