@@ -2,6 +2,7 @@ package models
 
 import "fmt"
 
+//Вся логика валидации данных находится на managment
 //Инкапсуляция переменных структуры через camelcase
 type User struct {
 	id     int
@@ -39,12 +40,15 @@ func NewUser(idUser int, nameUser string, ageUser int, ratingUser float64) (*Use
 	}, nil
 }
 
+//Валидация при изменении ID
+func (user *User) ChangeID(newId int) error {
+	user.id = newId
+	return nil
+}
+
 //Валидация при изменении имени
 func (user *User) ChangeName(newName string) error {
 
-	if user == nil {
-		return fmt.Errorf("Пользователь пустой при изменении имени!")
-	}
 	if newName == "" {
 		return fmt.Errorf("Пустое имя!")
 	}
@@ -54,12 +58,9 @@ func (user *User) ChangeName(newName string) error {
 
 //Валидация при изменении возраста
 func (user *User) ChangeAge(newAge int) error {
-	if user == nil {
-		return fmt.Errorf("Пользователь пустой при изменении возраста!")
-	}
 	validAge := newAge > 0 && newAge <= 150
 	if !validAge {
-		return fmt.Errorf("Нельзя изменить возраст, возраст должен быть от 0 до 150 включительно")
+		return fmt.Errorf("Нельзя изменить возраст, возраст должен быть от 1 до 150 включительно")
 	}
 	user.age = newAge
 	return nil
@@ -67,9 +68,6 @@ func (user *User) ChangeAge(newAge int) error {
 
 //Валидация при изменении рейтинга
 func (user *User) ChangeRating(newRating float64) error {
-	if user == nil {
-		return fmt.Errorf("Пользователь пустой при изменении рейтинга!")
-	}
 	validRate := newRating >= 0.0 && newRating <= 10.0
 	if !validRate {
 		return fmt.Errorf("Нельзя изменить рейтинг, рейтинг должен быть от 0.0 до 10.0!")
@@ -81,24 +79,28 @@ func (user *User) ChangeRating(newRating float64) error {
 
 //Геттер получения имени пользователя
 func (user *User) GetName() string {
-	if user == nil {
-		return "Пользователь пустой при получении имени!"
-	}
 	return user.name
 }
 
 //Геттер получения ID пользователя
 func (user *User) GetId() int {
-	if user == nil {
-		return 0
-	}
 	return user.id
+}
+
+//геттер получения возраста пользователя
+func (user *User) GetAge() int {
+	return user.age
 }
 
 //Геттер получения рейтинга пользователя
 func (user *User) GetRating() float64 {
-	if user == nil {
-		return 0.0
-	}
 	return user.rating
+}
+
+//Вывод всех пользователей
+func (user *User) InfoString() string {
+	return fmt.Sprintf(
+		"ID пользователя: %d\nИмя пользователя: %s\nВозраст пользователя: %d\nРейтинг пользователя: %.2f",
+		user.GetId(), user.GetName(), user.GetAge(), user.GetRating(),
+	)
 }
